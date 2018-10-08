@@ -1,0 +1,19 @@
+{
+  "name": "web3-signature-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "eth-sig-util": "^2.1.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6"
+  },
+  "description": "An example of securely verifying that a user owns an Ethereum address",
+  "author": "Alex McNerney"
+}

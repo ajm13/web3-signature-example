@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Web3 Signature Testing</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <style>
+    button {
+      width: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <pre>msg: {{ message }}</pre>
+    <pre>sig: {{ signature }}</pre>
+    <pre>valid: {{ success }}</pre>
+
+    <button v-if="!message" @click="getMessage">get message</button>
+    <button v-else-if="!signature" @click="signMessage">sign message</button>
+    <button v-else-if="success === ''" @click="validateSignature">validate signature</button>
+    <button v-else @click="reset">reset</button>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+
+      data: {
+        message: '',
+        signature: '',
+        success: ''
+      },
+
+      methods: {
+        async getMessage() {
+          let res = await fetch('/eth/message').then(r => r.json())
+          this.message = res.message
+        },
+
+        async signMessage() {
+          const hex = web3.fromAscii(this.message)
+          web3.personal.sign(hex, web3.eth.accounts[0], (err, sig) => {
+            this.signature = sig
+          })
+        },
+
+        async validateSignature() {
+          let res = await fetch('/eth/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              address: web3.eth.accounts[0],
+              signature: this.signature
+            })
+          }).then(r => r.json())
+          this.success = res.success
+        },
+
+        reset() {
+          this.message = ''
+          this.signature = ''
+          this.success = ''
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
